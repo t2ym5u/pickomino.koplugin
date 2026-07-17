@@ -1,0 +1,10 @@
+return {
+    ["Need at least one worm and total >= 21 to stop."] = { fr = "Il faut au moins un ver et un total ≥ 21 pour s'arrêter." },
+    ["Cannot keep %1 — already set aside or not rolled."] = { fr = "Impossible de garder %1 — déjà mis de côté ou non lancé." },
+    ["Keep a die face first."]           = { fr = "Gardez d'abord une face de dé." },
+    ["Nothing to stop yet. Roll first."] = { fr = "Rien à arrêter. Lancez d'abord." },
+    ["Choose a face to keep"]            = { fr = "Choisissez une face à garder" },
+    ["Bust! No new values available."]   = { fr = "Banqueroute ! Aucune nouvelle valeur disponible." },
+    ["Round %1/%2 | Sum: %3%4 | Score: %5 | %6"] = { fr = "Tour %1/%2 | Somme : %3%4 | Score : %5 | %6" },
+    ["Cannot keep %1 — already set aside or not rolled."] = { fr = "Impossible de garder %1 — déjà mis de côté ou non lancé." },
+}
