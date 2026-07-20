@@ -7,4 +7,10 @@ return {
     ["Bust! No new values available."]   = { fr = "Banqueroute ! Aucune nouvelle valeur disponible." },
     ["Round %1/%2 | Sum: %3%4 | Score: %5 | %6"] = { fr = "Tour %1/%2 | Somme : %3%4 | Score : %5 | %6" },
     ["Cannot keep %1 — already set aside or not rolled."] = { fr = "Impossible de garder %1 — déjà mis de côté ou non lancé." },
+    ["Stop"]        = { fr = "Arrêter" },
+    ["Game over. Start a new game."]       = { fr = "Partie terminée. Lancez une nouvelle partie." },
+    ["Game over! Final score: %1 worms"]   = { fr = "Partie terminée ! Score final : %1 vers" },
+    ["Combinatorial dice and tile logic game"] = { fr = "Jeu de logique combinatoire avec dés et tuiles" },
+    ["Kept: "]      = { fr = "Gardé : " },
+    ["Pickomino"]   = { fr = "Pickomino" },
 }
