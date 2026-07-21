@@ -3,5 +3,5 @@ return {
     name        = "pickomino",
     fullname    = _("Pickomino"),
     description = _("Combinatorial dice and tile logic game"),
-    version     = "1.1.4",
+    version     = "1.1.5",
 }
