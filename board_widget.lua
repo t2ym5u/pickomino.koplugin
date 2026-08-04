@@ -5,6 +5,7 @@ local Geom           = require("ui/geometry")
 local InputContainer = require("ui/widget/container/inputcontainer")
 local RenderText     = require("ui/rendertext")
 local UIManager      = require("ui/uimanager")
+local _              = require("i18n")
 
 local C_BG       = Blitbuffer.COLOR_WHITE
 local C_DIE_ACT  = Blitbuffer.COLOR_WHITE
@@ -142,7 +143,7 @@ function PicominoBoardWidget:paintTo(bb, x, y)
     local kv_label = _("Kept: ")
     local kv_parts = {}
     local FACE_WORM = board.FACE_WORM
-    for face, _ in pairs(board.kept_values) do
+    for face in pairs(board.kept_values) do
         local lbl = (face == FACE_WORM) and "W" or tostring(face)
         kv_parts[#kv_parts + 1] = lbl
     end
