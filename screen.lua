@@ -127,6 +127,8 @@ function PickominoScreen:buildLayout()
         self.board_widget,
     }
 
+    self.status_text:setMaxWidth(is_landscape and btn_width or board_frame:getSize().w)
+
     if is_landscape then
         local right_panel = VerticalGroup:new{
             align = "center",
