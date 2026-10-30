@@ -7,8 +7,6 @@ local function lrequire(name)
     return package.loaded[key]
 end
 
-local ButtonTable        = require("ui/widget/buttontable")
-local Device             = require("device")
 local FrameContainer     = require("ui/widget/container/framecontainer")
 local HorizontalGroup    = require("ui/widget/horizontalgroup")
 local HorizontalSpan     = require("ui/widget/horizontalspan")
@@ -22,8 +20,6 @@ local T                  = require("ffi/util").template
 local ScreenBase           = require("screen_base")
 local PickominoBoard       = lrequire("board")
 local PicominoBoardWidget  = lrequire("board_widget")
-
-local DeviceScreen = Device.screen
 
 local GAME_RULES_EN = _([[
 Pickomino (Heckmeck) — Rules
@@ -81,13 +77,7 @@ end
 -- ---------------------------------------------------------------------------
 
 function PickominoScreen:buildLayout()
-    local sw           = DeviceScreen:getWidth()
-    local sh = DeviceScreen:getHeight()
     local is_landscape = self:isLandscape()
-
-    local btn_width = is_landscape
-        and math.max(math.floor(sw * 0.38), 100)
-        or  math.floor(sw * 0.9)
 
     local title_bar = self:buildTitleBar(_("Pickomino"), function()
         return {
@@ -96,61 +86,45 @@ function PickominoScreen:buildLayout()
         }
     end)
 
-    local action_buttons = ButtonTable:new{
-        shrink_unneeded_width = true,
-        width   = btn_width,
-        buttons = {{
+    self.status_text:setMaxWidth(self:getControlsWidth())
+    local controls = VerticalGroup:new{
+        align = "center",
+        self.status_text,
+        VerticalSpan:new{ width = Size.span.vertical_large },
+        self:buildActionBar({
             { text = _("Roll"),  callback = function() self:onRoll() end },
             { text = _("Stop"),  callback = function() self:onStop() end },
-        }},
+        }),
     }
 
-    local margin      = Size.margin.default
     local padding     = Size.padding.large
-    local frame_extra = (padding + margin) * 2
-
-    local board_max_w = is_landscape and math.floor(sw * 0.55) or (sw - frame_extra)
-    local board_max_h = is_landscape
-        and (sh - frame_extra - 40)
-        or  math.floor(sh * 0.45)
+    local frame_extra = 2 * (padding + Size.border.window)
+    local budget_w, budget_h = self:getBoardBudget(title_bar, controls)
 
     self.board_widget = PicominoBoardWidget:new{
         board      = self.board,
-        max_width  = board_max_w,
-        max_height = board_max_h,
+        max_width  = budget_w - frame_extra,
+        max_height = budget_h - frame_extra,
         onFaceTap  = function(face) self:onFaceTap(face) end,
     }
 
     local board_frame = FrameContainer:new{
         padding = padding,
-        margin  = margin,
+        margin  = 0,
         self.board_widget,
     }
 
-    self.status_text:setMaxWidth(is_landscape and btn_width or board_frame:getSize().w)
-
     if is_landscape then
-        local right_panel = VerticalGroup:new{
-            align = "center",
-            self.status_text,
-            VerticalSpan:new{ width = Size.span.vertical_large },
-            action_buttons,
-        }
         local content = HorizontalGroup:new{
             align = "center",
             board_frame,
-            HorizontalSpan:new{ width = Size.span.horizontal_default },
-            right_panel,
+            HorizontalSpan:new{ width = self:getGutter() },
+            controls,
         }
         self:buildLandscapeLayout(title_bar, content)
     else
-        local content = VerticalGroup:new{
-            align = "center",
-            board_frame,
-            VerticalSpan:new{ width = Size.span.vertical_large },
-            self.status_text,
-        }
-        self:buildPortraitLayout(title_bar, content, action_buttons)
+        self:buildPortraitLayout(title_bar, board_frame,
+            VerticalGroup:new{ align = "center", controls, VerticalSpan:new{ width = self:getGutter() } })
     end
     self:updateStatus()
 end
@@ -167,10 +141,14 @@ function PickominoScreen:onFaceTap(face)
     local ok = self.board:keepValue(face)
     if not ok then
         local lbl = (face == PickominoBoard.FACE_WORM) and "W" or tostring(face)
+        -- Return here: falling through to updateStatus() would overwrite the
+        -- message before it was ever seen.
         self:updateStatus(T(_("Cannot keep %1 — already set aside or not rolled."), lbl))
+        return
     end
     self.board_widget:refresh()
     self:updateStatus()
+    self:refreshActionBar()
     self.plugin:saveState(self.board:serialize())
 end
 
@@ -195,6 +173,7 @@ function PickominoScreen:onRoll()
     else
         self:updateStatus()
     end
+    self:refreshActionBar()
     self.plugin:saveState(board:serialize())
 end
 
@@ -215,7 +194,12 @@ function PickominoScreen:onStop()
     else
         self:updateStatus()
     end
+    self:refreshActionBar()
     self.plugin:saveState(board:serialize())
+end
+
+function PickominoScreen:isRoundOver()
+    return self.board.game_over and true or false
 end
 
 function PickominoScreen:onNewGame()
@@ -248,10 +232,10 @@ function PickominoScreen:updateStatus(msg)
                 state_label = _("Done")
             end
             local worm_str = board.has_worm and " W" or ""
-            status = T(_("Round %1/%2 | Sum: %3%4 | Score: %5 | %6"),
-                board.round, board.max_rounds,
-                board.turn_sum, worm_str,
-                board.score,
+            status = self:joinStatus(
+                T(_("Round: %1/%2"), board.round, board.max_rounds),
+                T(_("Sum: %1"), board.turn_sum .. worm_str),
+                T(_("Score: %1"), board.score),
                 state_label)
         end
     end
