@@ -276,5 +276,6 @@ PickominoBoard.FACE_WORM = FACE_WORM
 PickominoBoard.NUM_DICE  = NUM_DICE
 PickominoBoard.TILE_MIN  = TILE_MIN
 PickominoBoard.TILE_MAX  = TILE_MAX
+PickominoBoard.wormsForTile = worms_for_tile
 
 return PickominoBoard

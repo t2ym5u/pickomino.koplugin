@@ -6,6 +6,27 @@ Reconstructed from this repository's git history: each release lists the
 feature and fix commits it carried. Version bumps, screenshot additions
 and CI syncs are left out.
 
+## [1.2.0] - 2026-10-30
+
+### Added
+- "New game" once the game is over: the action bar shows it in place of
+  Roll and Stop, so the next game no longer needs the menu.
+
+### Changed
+- Redesigned play screen, in line with the other games: a full-width action
+  bar and a board that fills the available room, with one frame hugging it.
+  The status line reads "Round: n/m · Sum: n · Score: n" and wraps in
+  landscape instead of being cut off.
+- The 16 tiles are laid out as two rows of eight instead of one cramped row,
+  and each tile shows its worm count as a row of dots under its number.
+  Dice, the "Kept" line and the tiles are sized to fit together, with their
+  text fitted to the boxes it sits in.
+- New README screenshot.
+
+### Fixed
+- Tapping a die face that can't be kept showed no explanation: the "Cannot
+  keep …" message was overwritten by the regular status straight away.
+
 ## [1.1.14] - 2026-10-07
 
 ### Fixed
